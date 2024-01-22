@@ -1,6 +1,9 @@
 ﻿using Database.RegistosRetro;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Xml.Linq;
 
 namespace Business
 {
@@ -24,36 +27,85 @@ namespace Business
 
         private static TClient ConvertDatabaseObject(Clients dbObject)
         {
-            return new TClient();
+            var result = new TClient();
+            result.id = dbObject.id;
+            result.Name = dbObject.Name;
+            result.Address = dbObject.Address;
+            result.Phone = dbObject.Phone;
+            result.Email = dbObject.Email;
+            result.CreationDate = dbObject.CreationDate;
+            return result;
         }
 
         public static TClient Get(int id)
         {
-            return new TClient();
+            var db = new RegistosRetroDB();
+            var dbResult = db.Clients.Where(x=> x.id == id).Single();
+            return ConvertDatabaseObject(dbResult);
+        }
+
+        public static TClient Get(string name)
+        {
+            var db = new RegistosRetroDB();
+            var dbResult = db.Clients.Where(x => x.Name.Trim().ToLower() == name.Trim().ToLower() && x.Active).Single();
+            return ConvertDatabaseObject(dbResult);
         }
 
         public static List<TClient> GetAll()
         {
-            return new List<TClient>();
+            var db = new RegistosRetroDB();
+            var result = new List<TClient>();
+            var dbResult = db.Clients.Where(x=> x.Active).ToList();
+            foreach ( var item in dbResult )
+                result.Add(ConvertDatabaseObject(item));
+            return result;
         }
 
-        public static TClient Add(string Name, string Address, string Phone, string Email)
+        public static TClient Add(string name, string address, string phone, string email)
         {
-            return new TClient();
+            if (Exists(name))
+                return Get(name);
+            var db = new RegistosRetroDB();
+            var dbResult = new Clients();
+            dbResult.Name = name.Trim();
+            dbResult.Address = string.IsNullOrEmpty(address) ? null : address.Trim();
+            dbResult.Phone = string.IsNullOrEmpty(phone) ? null : phone.Trim();
+            dbResult.Email = string.IsNullOrEmpty(email) ? null : email.Trim();
+            dbResult.CreationDate = DateTime.Now;
+            dbResult.Active = true;
+            db.Clients.Add(dbResult);
+            db.SaveChanges();
+            return ConvertDatabaseObject(dbResult);
         }
 
-        public static TClient Update(int id, string Name, string Address, string Phone, string Email)
+        public static TClient Update(int id, string name, string address, string phone, string email)
         {
-            return new TClient();
+            var db = new RegistosRetroDB();
+            var dbResult = db.Clients.Where(x => x.id == id).Single();
+            if (dbResult.Name.Trim().ToLower() != name.Trim().ToLower())
+                if (Exists(name))
+                    throw new Exception("There is already a user with the name \"" + name.Trim() + "\".");
+
+            dbResult.Name = name.Trim();
+            dbResult.Address = string.IsNullOrEmpty(address) ? null : address.Trim();
+            dbResult.Phone = string.IsNullOrEmpty(phone) ? null : phone.Trim();
+            dbResult.Email = string.IsNullOrEmpty(email) ? null : email.Trim();
+            db.SaveChanges();
+            return ConvertDatabaseObject(dbResult);
         }
 
-        public static TClient Exists(string Name, string Address, string Phone, string Email)
+        public static bool Exists(string name)
         {
-            return new TClient();
+            var db = new RegistosRetroDB();
+            return db.Clients.Where(x => x.Name.ToLower().Trim() == name.ToLower().Trim() && x.Active).Any();
         }
 
         public static void Delete(int id)
         {
+            var db = new RegistosRetroDB();
+            var client = db.Clients.Where(x => x.id == id).Single();
+            client.Active = false;
+            db.SaveChanges();
         }
     }
 }
