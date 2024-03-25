@@ -10,34 +10,115 @@
         Icon="pack://application:,,,/Images/icon.png"
         ShowIconOnTitleBar="True"
         AllowsTransparency="True" Background="Transparent"
+        BorderThickness="0"
+        Loaded="MetroWindow_Loaded"
         >
 
-    <Border Background="LightGray" CornerRadius="30" MouseDown="Border_MouseDown" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+    <Border Background="White" CornerRadius="0" >
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
+                <RowDefinition Height="28" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-            VerticalAlignment="Center">
-
+            Background="#2F2F2F"
+            MouseDown="Border_MouseDown" >
 
             </Grid>
             <Grid Grid.Row="1" Grid.Column="0" Background="Transparent">
 
-                <Border Grid.Row="1" Background="#623ed0" CornerRadius="0 50 0 0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="65" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                </Border>
+                    <Grid Grid.Row="0" Background="#2F2F2F">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
+                        <!-- Image -->
+                        <Image Source="pack://application:,,,/Images/icon.png" 
+                               VerticalAlignment="Top" Width="55" Height="55" Margin="20 -10 4 8"/>
+
+                        <!-- Text -->
+                        <TextBlock Text="Registos Retro" 
+                                   FontSize="20" 
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"
+                                   Margin="10 -35 0 0"
+                                   Grid.Column="1"/>    
+                    </Grid>
+
+                    <Separator VerticalAlignment="Bottom" Margin="13 0 13 8" Background="#F4CA4A"></Separator>
+
+                    <Grid Grid.Row="1">
+
+                        <Border Grid.Row="1" Background="#2F2F2F" CornerRadius="0 0 0 0">
+                            <StackPanel>
+                                <Button Name="home_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="HomeVariant" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Geral" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="clients_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="AccountMultiple" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Clientes" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="services_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="Cogs" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Serviços" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="invoices_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="FileDocumentMultiple" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Folhas Obra" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="stock_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="Factory" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Stock" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="debts_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="BankOff" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Em Dívida" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Name="gas_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Icon:PackIconMaterial Kind="GasStation" Style="{StaticResource menuButtonIcon}" />
+                                        <TextBlock Text="Combustível" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid Grid.Row="1" Grid.Column="1">
-
-                <!--Pages-->
-
+            <Grid Grid.Row="1" Grid.Column="1" Background="White">
+                <Frame x:Name="pageFrame" NavigationUIVisibility="Hidden" />
             </Grid>
 
         </Grid>

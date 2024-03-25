@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="RegistosRetro.UserControls.SearchBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:RegistosRetro.UserControls"
+             mc:Ignorable="d"
+             Background="Transparent"
+             >
+    <Border Background="{Binding BackgroundSearchBox, RelativeSource={RelativeSource AncestorType=UserControl}}" BorderThickness="1" CornerRadius="5" Margin="0">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Icon:PackIconMaterial Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                   Grid.Column="0" 
+                                   Kind="Magnify" VerticalAlignment="Center" 
+                                   Margin="10 5 0 5"/>
+            <TextBox Loaded="uc_txtBox_Loaded" Name="uc_txtBox" Grid.Column="1" Width="150" Height="35" Padding="8" 
+                     BorderThickness="0" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     Background="Transparent" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" 
+                     TextChanged="uc_txtBox_TextChanged" />
+        </Grid>
+    </Border>
+</UserControl>
