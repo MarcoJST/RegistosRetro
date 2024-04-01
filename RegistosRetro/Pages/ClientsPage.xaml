@@ -38,10 +38,10 @@
                 CanUserResizeRows="False"
                 CanUserReorderColumns="False"
                 Padding="8"
+                Name="dg_clientss"
                 >
                 <DataGrid.Columns>
-                    <!-- Other columns as needed -->
-                    <DataGridTemplateColumn Header="Nome">
+                    <DataGridTemplateColumn Header="Nome" SortMemberPath="Name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>

@@ -56,8 +56,10 @@ namespace RegistosRetro.Pages
 
         private void NewClient_SearchText(object sender, RoutedEventArgs e)
         {
-            var textBox = ((RegistosRetro.UserControls.SearchBox)sender).uc_txtBox;
-            MessageBox.Show(textBox.Text);
+            var textBox = ((RegistosRetro.UserControls.SearchBox)sender).uc_txtBox.Text;
+            dg_clientss.ItemsSource = null;
+            dg_clientss.ItemsSource = Business.TClient.DynamicSearch(textBox);
         }
+
     }
 }

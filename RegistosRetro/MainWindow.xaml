@@ -14,6 +14,12 @@
         Loaded="MetroWindow_Loaded"
         >
 
+    <mah:MetroWindow.Resources>
+        <Style TargetType="{x:Type mah:WindowButtonCommands}">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </mah:MetroWindow.Resources>
+
     <Border Background="White" CornerRadius="0" >
         <Grid>
             <Grid.ColumnDefinitions>

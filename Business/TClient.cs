@@ -53,13 +53,34 @@ namespace Business
 
         public static List<TClient> GetAll()
         {
+            return DynamicSearch();
+        }
+
+        public static List<TClient> DynamicSearch(string textToSearch = "")
+        {
             var db = new RegistosRetroDB();
             var result = new List<TClient>();
-            var dbResult = db.Clients.Where(x=> x.Active).ToList();
-            foreach ( var item in dbResult )
+
+            IQueryable<Clients> query = db.Clients.Where(x => x.Active);
+
+            if (!string.IsNullOrEmpty(textToSearch))
+            {
+                string searchLower = textToSearch.ToLower().Trim();
+                query = query.Where(x =>
+                    x.Address.ToLower().Contains(searchLower) ||
+                    x.Name.ToLower().Contains(searchLower) ||
+                    x.Email.ToLower().Contains(searchLower) ||
+                    x.Phone.ToLower().Contains(searchLower));
+            }
+
+            var dbResult = query.ToList();
+
+            foreach (var item in dbResult)
                 result.Add(ConvertDatabaseObject(item));
+
             return result;
         }
+
 
         public static TClient Add(string name, string address, string phone, string email)
         {
