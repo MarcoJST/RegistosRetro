@@ -1,0 +1,89 @@
+﻿<Page x:Class="RegistosRetro.Pages.NewInvoicePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
+      mc:Ignorable="d"
+      Title="Nova Folha de Obra"
+      Loaded="Page_Loaded"
+      x:Name="NewInvoicePageName">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <localUC:BorderedTitle Title="Nova Folha de Obra" TitleFontSize="22" TitleFontWeight="DemiBold" TitleForeground="#2F2F2F"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel x:Name="wrapPanel" Orientation="Horizontal" Margin="10">
+                        <localUC:ComboBoxInput x:Name="inp_client" SelectedItem="0" WidthType="Very-Large" LabelText="Cliente" Mandatory="True"/>
+                        <localUC:Button Click="AddNewRow" Text="Nova Linha" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
+                        <DataGrid HorizontalAlignment="Stretch"
+                                AutoGenerateColumns="False"
+                                Loaded="DataGrid_Loaded"
+                                ColumnWidth="*"
+                                HorizontalScrollBarVisibility="Auto" 
+                                CanUserResizeColumns="False"
+                                CanUserResizeRows="False"
+                                CanUserReorderColumns="False"
+                                Padding="8"
+                                Name="dg_invoiceEntries"
+                                CanUserAddRows="False">
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="60" x:Name="dg_ref" Header="Ref." Binding="{Binding ElementName=NewInvoicePageName, Path=DataContext.ServiceList}"/>
+
+                                <DataGridComboBoxColumn x:Name="dg_services" Header="Serviço" 
+                                        SelectedValueBinding="{Binding idService}"
+                                        SelectedValuePath="id"
+                                        DisplayMemberPath="Service"
+                                        Width="120">    
+                                    <DataGridComboBoxColumn.ElementStyle>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="ItemsSource" Value="{Binding ElementName=NewInvoicePageName, Path=DataContext.ServiceList}"/>
+                                        </Style>
+                                    </DataGridComboBoxColumn.ElementStyle>
+                                    <DataGridComboBoxColumn.EditingElementStyle>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="ItemsSource" Value="{Binding ElementName=NewInvoicePageName, Path=DataContext.ServiceList}"/>
+                                        </Style>
+                                    </DataGridComboBoxColumn.EditingElementStyle>
+                                </DataGridComboBoxColumn>
+
+                                <DataGridTextColumn x:Name="dg_date" Width="80" Header="Data" Binding="{Binding ServiceDate, StringFormat=\{0:dd/MM/yyyy\}}"/>
+                                <DataGridTextColumn x:Name="dg_description" Header="Descrição" Binding="{Binding Description}"/>
+                                <DataGridTextColumn x:Name="dg_local" Width="120" Header="Local" Binding="{Binding Local}"/>
+                                <DataGridTextColumn x:Name="dg_amount" Width="70" Header="Valor" Binding="{Binding Amount}"/>
+                                <DataGridTextColumn x:Name="dg_quantity" Width="70" Header="QTD." Binding="{Binding Quantity}"/>
+                                <DataGridTextColumn x:Name="dg_total" Width="70" IsReadOnly="True" Header="Total" Binding="{Binding TotalAmount}"/>
+                                <DataGridTemplateColumn Width="25" IsReadOnly="True" x:Name="dg_delete">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Icon:PackIconMaterial Cursor="Hand" HorizontalAlignment="Center" Foreground="Red" Height="13" Kind="TrashCan" MouseLeftButtonDown="DeleteButton_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </WrapPanel>
+                </ScrollViewer>
+            </Grid>
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 10 10 50">
+                <localUC:Button Click="Button_Click" Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="200"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

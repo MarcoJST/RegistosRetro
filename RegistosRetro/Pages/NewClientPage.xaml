@@ -1,0 +1,45 @@
+﻿<Page x:Class="RegistosRetro.Pages.NewClientPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
+      mc:Ignorable="d"
+      Title="Novo Cliente"
+      Loaded="Page_Loaded"
+      >
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <localUC:BorderedTitle Title="Novo Cliente" TitleFontSize="22" TitleFontWeight="DemiBold" TitleForeground="#2F2F2F"/>
+        </Grid>
+
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <WrapPanel x:Name="wrapPanel" Orientation="Horizontal" Margin="10">
+                        <localUC:Input x:Name="inp_name" WidthType="Very-Large" LabelText="Nome" Mandatory="True"/>
+                        <localUC:Input x:Name="inp_Address" WidthType="Very-Large" LabelText="Morada"/>
+                        <localUC:Input x:Name="inp_Phone" WidthType="Medium" LabelText="Telefone" Type="Number"/>
+                        <localUC:Input x:Name="inp_Email" WidthType="Very-Large" LabelText="Email"/>
+                    </WrapPanel>
+                </ScrollViewer>
+            </Grid>
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 10 10 50">
+                <localUC:Button Click="Button_Click" Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="200"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

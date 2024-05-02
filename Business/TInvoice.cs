@@ -1,6 +1,7 @@
 ﻿using Database.RegistosRetro;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Security.Policy;
@@ -17,6 +18,9 @@ namespace Business
         public decimal TotalAmount { get; set; }
         public bool Closed { get; set; }
         public DateTime CreationDate { get; set; }
+        public TClient Client { get { return TClient.Get(idClient); } }
+        public decimal Paid { get { return GetPaidValue(id); } }
+        public decimal NotPaid { get { return GetUnpaidValue(id); } }
 
         public TInvoice()
         {
@@ -43,19 +47,32 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
-        public static List<TInvoice> GetAll(bool withClosedOnes = true)
+        public static List<TInvoice> GetAll()
         {
-            var db = new RegistosRetroDB();
-            var result = new List<TInvoice>();
-            var dbResult = new List<Invoices>();
-            if (withClosedOnes)
-                dbResult = db.Invoices.Where(x => x.Active).ToList();
-            else
-                dbResult = db.Invoices.Where(x => x.Active && x.Closed).ToList();
-            
-            foreach (var item in dbResult)
-                result.Add(ConvertDatabaseObject(item));
-            return result;
+            return DynamicSearch();
+        }
+
+        public static List<TInvoice> DynamicSearch(string searchText = "")
+        {
+            using (var db = new RegistosRetroDB())
+            {
+                IQueryable<Invoices> query = db.Invoices.Where(x => x.Active);
+
+                if (!string.IsNullOrWhiteSpace(searchText))
+                {
+                    searchText = searchText.Trim();
+                    if (decimal.TryParse(searchText, out decimal amount))
+                        query = query.Where(x => x.TotalAmount == amount);
+                    else
+                    {
+                        string searchLower = searchText.ToLower();
+                        query = query.Include(x=> x.Clients).Where(x => x.Clients.Name.ToLower().Contains(searchLower));
+                    }
+                }
+
+                var dbResult = query.ToList();
+                return dbResult.Select(ConvertDatabaseObject).ToList();
+            }
         }
 
         public static List<TInvoice> GetAllFromClient(int idClient, bool withClosedOnes = true)
@@ -102,6 +119,21 @@ namespace Business
             var client = db.Invoices.Where(x => x.id == id).Single();
             client.Active = false;
             db.SaveChanges();
+        }
+    
+        public static decimal GetPaidValue(int idInvoice)
+        {
+            var db = new RegistosRetroDB();
+            if (!db.InvoicePayments.Where(x => x.Invoice == idInvoice).Any())
+                return 0.00m;
+            else
+                return db.InvoicePayments.Where(x=> x.Invoice == idInvoice).Sum(x=> x.Amount);
+        }
+
+        public static decimal GetUnpaidValue(int idInvoice)
+        {
+            var invoice = Get(idInvoice);
+            return invoice.TotalAmount - GetPaidValue(idInvoice);
         }
     }
 }

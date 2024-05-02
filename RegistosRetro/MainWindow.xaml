@@ -19,7 +19,7 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
     </mah:MetroWindow.Resources>
-
+    
     <Border Background="White" CornerRadius="0" >
         <Grid>
             <Grid.ColumnDefinitions>
@@ -124,7 +124,7 @@
                 </Grid>
             </Grid>
             <Grid Grid.Row="1" Grid.Column="1" Background="White">
-                <Frame x:Name="pageFrame" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="pageFrame" />
             </Grid>
 
         </Grid>

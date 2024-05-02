@@ -51,15 +51,22 @@ namespace RegistosRetro.Pages
             Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
 
             if (pageFrame != null)
-                pageFrame.Navigate(new ClientPage());
+                pageFrame.Navigate(new NewClientPage());
         }
 
-        private void NewClient_SearchText(object sender, RoutedEventArgs e)
+        private void Client_SearchText(object sender, RoutedEventArgs e)
         {
             var textBox = ((RegistosRetro.UserControls.SearchBox)sender).uc_txtBox.Text;
             dg_clientss.ItemsSource = null;
             dg_clientss.ItemsSource = Business.TClient.DynamicSearch(textBox);
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window parentWindow = Window.GetWindow(this);
+            Frame frame = parentWindow.FindName("pageFrame") as Frame;
+            if (frame != null)
+                frame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
+        }
     }
 }

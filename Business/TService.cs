@@ -13,6 +13,7 @@ namespace Business
     public class TService
     {
         public int id { get; set; }
+        public string Reference { get; set; }
         public string Service { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreationDate { get; set; }
@@ -20,6 +21,7 @@ namespace Business
         public TService()
         {
             id = -1;
+            Reference = "";
             Service = "";
             Amount = 0.00m;
             CreationDate = new DateTime();
@@ -29,6 +31,7 @@ namespace Business
         {
             var result = new TService();
             result.id = dbObject.id;
+            result.Reference = dbObject.Reference;
             result.Service = dbObject.Service;
             result.Amount = dbObject.Amount;
             result.CreationDate = dbObject.CreationDate;
@@ -51,21 +54,40 @@ namespace Business
 
         public static List<TService> GetAll()
         {
-            var db = new RegistosRetroDB();
-            var result = new List<TService>();
-            var dbResult = db.Services.Where(x => x.Active).ToList();
-            foreach (var item in dbResult)
-                result.Add(ConvertDatabaseObject(item));
-            return result;
+            return DynamicSearch();
         }
 
-        public static TService Add(string service, decimal amount)
+        public static List<TService> DynamicSearch(string searchText = "")
+        {
+            using (var db = new RegistosRetroDB())
+            {
+                IQueryable<Services> query = db.Services.Where(x => x.Active);
+
+                if (!string.IsNullOrWhiteSpace(searchText))
+                {
+                    searchText = searchText.Trim();
+                    if (decimal.TryParse(searchText, out decimal amount))
+                        query = query.Where(x => x.Amount == amount);
+                    else
+                    {
+                        string searchLower = searchText.ToLower();
+                        query = query.Where(x => x.Service.ToLower().Contains(searchLower) || x.Reference.ToLower().Contains(searchLower));
+                    }
+                }
+
+                var dbResult = query.ToList();
+                return dbResult.Select(ConvertDatabaseObject).ToList();
+            }
+        }
+
+        public static TService Add(string reference, string service, decimal amount)
         {
             if (Exists(service))
                 return Get(service);
             var db = new RegistosRetroDB();
             var dbResult = new Services();
             dbResult.Service = service.Trim();
+            dbResult.Reference = reference.Trim();
             dbResult.Amount = amount;
             dbResult.CreationDate = DateTime.Now;
             dbResult.Active = true;
@@ -74,7 +96,7 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
-        public static TService Update(int id, string service, decimal amount)
+        public static TService Update(int id, string reference, string service, decimal amount)
         {
             var db = new RegistosRetroDB();
             var dbResult = db.Services.Where(x => x.id == id).Single();
@@ -83,6 +105,7 @@ namespace Business
                     throw new Exception("There is already a service with the name \"" + service.Trim() + "\".");
 
             dbResult.Service = service.Trim();
+            dbResult.Reference = reference.Trim();
             dbResult.Amount = amount;
             db.SaveChanges();
             return ConvertDatabaseObject(dbResult);

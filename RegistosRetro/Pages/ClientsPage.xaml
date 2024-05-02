@@ -8,7 +8,8 @@
       xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ClientsPage"
+      Title="Clientes"
+      Loaded="Page_Loaded"
       >
 
     <Grid>
@@ -23,7 +24,7 @@
                     <localUC:Button Click="NewClient_Click" Text="Adicionar Cliente" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
                 </Grid>
                 <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
-                    <localUC:SearchBox SearchText="NewClient_SearchText" BackgroundSearchBox="#2F2F2F" Foreground="White" />
+                    <localUC:SearchBox SearchText="Client_SearchText" BackgroundSearchBox="#2F2F2F" Foreground="White" />
                 </Grid>
             </Grid>
         </Grid>
@@ -39,23 +40,68 @@
                 CanUserReorderColumns="False"
                 Padding="8"
                 Name="dg_clientss"
-                >
+                CanUserAddRows="False"
+                >   
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Nome" SortMemberPath="Name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                            <Hyperlink >
-                                <Run Text="{Binding Name}" MouseDown="Run_MouseDown" Tag="{Binding id}"/>
-                            </Hyperlink>
+                                    <Hyperlink>
+                                        <Run Text="{Binding Name}" MouseDown="Run_MouseDown" Tag="{Binding id}"/>
+                                    </Hyperlink>    
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Morada" Binding="{Binding Address}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Telemóvel" Binding="{Binding Phone}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Morada" IsReadOnly="True" SortMemberPath="Address">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Text" Value="{Binding Address}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Address}" Value="{x:Null}">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Address}" Value="">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Telemóvel" IsReadOnly="True" SortMemberPath="Phone">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Text" Value="{Binding Phone}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Phone}" Value="{x:Null}">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Phone}" Value="">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Email" IsReadOnly="True" SortMemberPath="Email">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Text" Value="{Binding Email}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Email}" Value="{x:Null}">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Email}" Value="">
+                                        <Setter Property="Text" Value="-" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

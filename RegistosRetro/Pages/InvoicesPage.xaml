@@ -4,12 +4,71 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="InvoicesPage"
-      Background="Pink">
+      Title="Folhas de Obra"
+      Loaded="Page_Loaded"
+      >
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid Grid.Row="0">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                    <localUC:Button Click="NewInvoice_Click" Text="Adicionar FO" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
+                </Grid>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
+                    <localUC:SearchBox SearchText="Invoice_SearchText" BackgroundSearchBox="#2F2F2F" Foreground="White" />
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <DataGrid
+            HorizontalAlignment="Stretch"
+            AutoGenerateColumns="False"
+            Loaded="DataGrid_Loaded"
+            ColumnWidth="*"
+            HorizontalScrollBarVisibility="Auto" 
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            CanUserReorderColumns="False"
+            Padding="8"
+            Name="dg_invoices"
+            CanUserAddRows="False"
+            >
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Cliente" SortMemberPath="Client.Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Hyperlink>
+                                        <Run Text="{Binding Client.Name}" MouseDown="Run_MouseDownClient" Tag="{Binding Client.id}"/>
+                                    </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Total" SortMemberPath="TotalAmount">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <Hyperlink >
+                                        <Run Text="{Binding TotalAmount, StringFormat={}{0} €}" MouseDown="Run_MouseDown" Tag="{Binding id}"/>
+                                    </Hyperlink>    
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Data" Binding="{Binding CreationDate, StringFormat={}{0:dd/MM/yyyy}}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Pago" Binding="{Binding Paid, StringFormat={}{0} €}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Em Dívida" Binding="{Binding NotPaid, StringFormat={}{0} €}" IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </Page>

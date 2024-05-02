@@ -51,6 +51,32 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
+        public static TClient GetByPhone(string phone)
+        {
+            if (string.IsNullOrEmpty(phone.Trim()))
+                throw new Exception("O argumento \"phone\" não é uma string válida");
+
+            if (!ExistsByPhone(phone))
+                throw new Exception("Não existe nenhum cliente com o número de telefone facultado");
+
+            var db = new RegistosRetroDB();
+            var dbResult = db.Clients.Where(x => x.Phone.Trim().ToLower() == phone.Trim().ToLower() && x.Active).Single();
+            return ConvertDatabaseObject(dbResult);
+        }
+
+        public static TClient GetByEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email.Trim()))
+                throw new Exception("O argumento \"email\" não é uma string válida");
+
+            if (!ExistsByEmail(email))
+                throw new Exception("Não existe nenhum cliente com o email facultado");
+
+            var db = new RegistosRetroDB();
+            var dbResult = db.Clients.Where(x => x.Email.Trim().ToLower() == email.Trim().ToLower() && x.Active).Single();
+            return ConvertDatabaseObject(dbResult);
+        }
+
         public static List<TClient> GetAll()
         {
             return DynamicSearch();
@@ -119,6 +145,24 @@ namespace Business
         {
             var db = new RegistosRetroDB();
             return db.Clients.Where(x => x.Name.ToLower().Trim() == name.ToLower().Trim() && x.Active).Any();
+        }
+
+        public static bool ExistsByEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email.Trim()))
+                return false;
+
+            var db = new RegistosRetroDB();
+            return db.Clients.Where(x => x.Email.ToLower().Trim() == email.ToLower().Trim() && x.Active).Any();
+        }
+
+        public static bool ExistsByPhone(string phone)
+        {
+            if (string.IsNullOrEmpty(phone.Trim()))
+                return false;
+
+            var db = new RegistosRetroDB();
+            return db.Clients.Where(x => x.Phone.ToLower().Trim() == phone.ToLower().Trim() && x.Active).Any();
         }
 
         public static void Delete(int id)

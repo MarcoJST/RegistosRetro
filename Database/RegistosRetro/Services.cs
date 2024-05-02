@@ -17,6 +17,10 @@ namespace Database.RegistosRetro
         public int id { get; set; }
 
         [Required]
+        [StringLength(5)]
+        public string Reference { get; set; }
+
+        [Required]
         [StringLength(100)]
         public string Service { get; set; }
 

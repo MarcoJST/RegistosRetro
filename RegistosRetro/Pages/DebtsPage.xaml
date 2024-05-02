@@ -6,8 +6,10 @@
       xmlns:local="clr-namespace:RegistosRetro.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="DebtsPage"
-      Background="Blue">
+      Title="Dívidas"
+      Background="Blue"
+      Loaded="Page_Loaded"
+      >
 
     <Grid>
         

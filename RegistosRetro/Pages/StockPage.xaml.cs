@@ -24,5 +24,13 @@ namespace RegistosRetro.Pages
         {
             InitializeComponent();
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window parentWindow = Window.GetWindow(this);
+            Frame frame = parentWindow.FindName("pageFrame") as Frame;
+            if (frame != null)
+                frame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
+        }
     }
 }

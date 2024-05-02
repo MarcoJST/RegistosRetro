@@ -4,12 +4,61 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ServicesPage"
-      Background="Teal">
+      Title="Serviços"
+      Loaded="Page_Loaded"
+      >
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid Grid.Row="0">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10">
+                    <localUC:Button Click="NewService_Click" Text="Adicionar Serviço" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
+                </Grid>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
+                    <localUC:SearchBox SearchText="Service_SearchText" BackgroundSearchBox="#2F2F2F" Foreground="White" />
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <DataGrid
+            HorizontalAlignment="Stretch"
+            AutoGenerateColumns="False"
+            Loaded="DataGrid_Loaded"
+            ColumnWidth="*"
+            HorizontalScrollBarVisibility="Auto" 
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            CanUserReorderColumns="False"
+            Padding="8"
+            Name="dg_services"
+            CanUserAddRows="False"
+            >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Width="60" Header="Ref." Binding="{Binding Reference}" IsReadOnly="True" />
+                    <DataGridTemplateColumn Header="Serviço" SortMemberPath="Service">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                        <Hyperlink >
+                            <Run Text="{Binding Service}" MouseDown="Run_MouseDown" Tag="{Binding id}"/>
+                        </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Width="80" Header="Preço" Binding="{Binding Amount, StringFormat={}{0} €}" IsReadOnly="True" />
+                    <DataGridTextColumn Width="220" Header="Criado Em" Binding="{Binding CreationDate, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </Page>

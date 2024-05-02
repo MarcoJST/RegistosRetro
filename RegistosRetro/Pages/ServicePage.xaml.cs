@@ -16,16 +16,16 @@ using System.Windows.Shapes;
 namespace RegistosRetro.Pages
 {
     /// <summary>
-    /// Interaction logic for ClientPage.xaml
+    /// Interaction logic for ServicePage.xaml
     /// </summary>
-    public partial class ClientPage : Page
+    public partial class ServicePage : Page
     {
-        public ClientPage()
+        public ServicePage()
         {
             InitializeComponent();
         }
 
-        public ClientPage(int idClient)
+        public ServicePage(int idService)
         {
             InitializeComponent();
         }
