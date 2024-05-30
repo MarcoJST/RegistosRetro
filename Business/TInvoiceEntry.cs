@@ -2,12 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Business
 {
@@ -88,6 +82,7 @@ namespace Business
             dbResult.ServiceDate = serviceDate;
             db.InvoicesEntries.Add(dbResult);
             db.SaveChanges();
+            TInvoice.UpdateTotalAmount(idInvoice);
             return ConvertDatabaseObject(dbResult);
         }
 

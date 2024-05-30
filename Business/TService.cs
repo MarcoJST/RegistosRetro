@@ -2,11 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Business
 {
@@ -123,6 +118,22 @@ namespace Business
             var service = db.Services.Where(x => x.id == id).Single();
             service.Active = false;
             db.SaveChanges();
+        }
+
+        public static bool ExistsByReference(string reference)
+        {
+            var db = new RegistosRetroDB();
+            return db.Services.Where(x => x.Reference.ToLower().Trim() == reference.ToLower().Trim() && x.Active).Any();
+        }
+
+        public static TService GetByReference(string reference)
+        {
+            if (!ExistsByReference(reference))
+                throw new Exception("Doesn't exist any service with the reference \"" + reference + "\"");
+            
+            var db = new RegistosRetroDB();
+            var dbResult = db.Services.Where(x => x.Reference.Trim().ToLower() == reference.Trim().ToLower() && x.Active).Single();
+            return ConvertDatabaseObject(dbResult);
         }
     }
 }

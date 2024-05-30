@@ -104,15 +104,6 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
-        public static TInvoice Update(int id, decimal totalAmount)
-        {
-            var db = new RegistosRetroDB();
-            var dbResult = db.Invoices.Where(x => x.id == id).Single();
-            dbResult.TotalAmount = totalAmount;
-            db.SaveChanges();
-            return ConvertDatabaseObject(dbResult);
-        }
-
         public static void Delete(int id)
         {
             var db = new RegistosRetroDB();
@@ -134,6 +125,14 @@ namespace Business
         {
             var invoice = Get(idInvoice);
             return invoice.TotalAmount - GetPaidValue(idInvoice);
+        }
+
+        public static void UpdateTotalAmount(int id)
+        {
+            var db = new RegistosRetroDB();
+            var invoice = db.Invoices.Where(x=> x.id == id).Single();
+            invoice.TotalAmount = db.InvoicesEntries.Where(x=> x.Invoice == id).Sum(x=> x.TotalAmount);
+            db.SaveChanges();
         }
     }
 }
