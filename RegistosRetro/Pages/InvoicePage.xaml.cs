@@ -57,7 +57,6 @@ namespace RegistosRetro.Pages
                     }
 
                     OnPropertyChanged(nameof(InvoiceEntries));
-                    OnPropertyChanged(nameof(TotalAmountSum));
                 }
             }
         }
@@ -90,30 +89,17 @@ namespace RegistosRetro.Pages
                     }
 
                     OnPropertyChanged(nameof(InvoicePayments));
-                    OnPropertyChanged(nameof(TotalAmountSum));
                 }
             }
         }
-        public int idInvoice { get; set; }
-        public string InvoiceTitle { get; set; }
-        public decimal TotalAmountSum
-        {
-            get { return Math.Round(InvoiceEntries.Sum(entry => entry.TotalAmount), 2); }
-        }
-        public decimal TotalPaidSum
-        {
-            get { return Math.Round(InvoicePayments.Sum(payment => payment.Amount), 2); }
-        }
-        public decimal TotalNotPaidSum
-        {
-            get { return TotalAmountSum - TotalPaidSum; }
-        }
+        public Helpers.TInvoice Invoice { get; set; }
+        public string InvoiceTitle { get;set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public InvoicePage()
         {
             InitializeComponent();
-            idInvoice = 0;
             InvoiceTitle = "Nova Folha de Obra";
             InitializeInvoicePage();
         }
@@ -121,20 +107,23 @@ namespace RegistosRetro.Pages
         public InvoicePage(int idInvoice)
         {
             InitializeComponent();
-            this.idInvoice = idInvoice;
             InvoiceTitle = "Folha de Obra Nº " + idInvoice;
-            InitializeInvoicePage();
+            InitializeInvoicePage(idInvoice);
         }
 
-        private void InitializeInvoicePage()
+        private void InitializeInvoicePage(int idInvoice = 0)
         {
-            btn_Delete.Visibility = idInvoice > 0 ? Visibility.Visible : Visibility.Collapsed;
-
+            Invoice = new Helpers.TInvoice();
             ServiceList = new ObservableCollection<TService>(Business.TService.GetAll());
             ClientsList = new ObservableCollection<TClient>(Business.TClient.GetAll());
-
             InvoiceEntries = new ObservableCollection<Helpers.TInvoiceEntry>();
             InvoicePayments = new ObservableCollection<Helpers.TInvoicePayment>();
+
+            btn_Delete.Visibility = idInvoice > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (idInvoice > 0)
+                Invoice = Helpers.TInvoice.Initialize(TInvoice.Get(idInvoice));
+
             if (idInvoice > 0)
                 FillInvoiceEntriesWithAnExistentInvoice();
             dg_invoiceEntries.ItemsSource = InvoiceEntries;
@@ -144,12 +133,12 @@ namespace RegistosRetro.Pages
 
         private void FillInvoiceEntriesWithAnExistentInvoice()
         {
-            var invoice = TInvoice.Get(idInvoice);
+            var invoice = TInvoice.Get(Invoice.id);
             if (!ClientsList.Where(x => x.id == invoice.idClient).Any())
                 ClientsList.Add(TClient.Get(invoice.idClient));
             SelectedClient = ClientsList.SingleOrDefault(x => x.id == invoice.idClient);
-            var invoiceEntries = Helpers.TInvoiceEntry.InitializeList(TInvoiceEntry.GetAllFromInvoice(idInvoice));
-            var invoicePayments = Helpers.TInvoicePayment.InitializeList(TInvoicePayment.GetAllFromInvoice(idInvoice));
+            var invoiceEntries = Helpers.TInvoiceEntry.InitializeList(TInvoiceEntry.GetAllFromInvoice(Invoice.id));
+            var invoicePayments = Helpers.TInvoicePayment.InitializeList(TInvoicePayment.GetAllFromInvoice(Invoice.id));
 
             foreach (var item in invoiceEntries)
                 AddNewRow(item);
@@ -193,8 +182,6 @@ namespace RegistosRetro.Pages
             var newPayment = invoicePayment;
             newPayment.PropertyChanged += InvoicePayment_PropertyChanged;
             InvoicePayments.Add(newPayment);
-            OnPropertyChanged(nameof(TotalPaidSum));
-            OnPropertyChanged(nameof(TotalNotPaidSum));
         }
 
         private void AddNewRow(Helpers.TInvoiceEntry invoiceEntry)
@@ -202,7 +189,6 @@ namespace RegistosRetro.Pages
             var newEntry = invoiceEntry;
             newEntry.PropertyChanged += InvoiceEntry_PropertyChanged;
             InvoiceEntries.Add(newEntry);
-            OnPropertyChanged(nameof(TotalAmountSum));
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -222,7 +208,7 @@ namespace RegistosRetro.Pages
             if (!ValidateDataOfSubmitedForm())
                 return;
 
-            if (idInvoice > 0)
+            if (Invoice.id > 0)
                 UpdateInvoice();
             else
                 AddNewInvoice();
@@ -231,7 +217,7 @@ namespace RegistosRetro.Pages
             Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
 
             if (pageFrame != null)
-                pageFrame.Navigate(new InvoicePage(idInvoice));
+                pageFrame.Navigate(new InvoicePage(Invoice.id));
         }
 
         private void btn_Cancel_Click(object sender, RoutedEventArgs e)
@@ -253,7 +239,7 @@ namespace RegistosRetro.Pages
             if (result != MessageBoxResult.Yes)
                 return;
 
-            TInvoice.Delete(idInvoice);
+            TInvoice.Delete(Invoice.id);
 
             Window parentWindow = Window.GetWindow(this);
             Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
@@ -265,11 +251,11 @@ namespace RegistosRetro.Pages
         private void UpdateInvoice()
         {
             var selectedClient = inp_client.ucComboBox.SelectedItem as TClient;
-            var invoice = TInvoice.Get(idInvoice);
+            var invoice = TInvoice.Get(Invoice.id);
             var idCurrentClient = selectedClient.id;
 
             if (idCurrentClient != invoice.idClient)
-                TInvoice.UpdateClient(idInvoice, idCurrentClient);
+                TInvoice.UpdateClient(Invoice.id, idCurrentClient);
 
             //Add and update entries
             foreach (var entry in InvoiceEntries)
@@ -283,7 +269,7 @@ namespace RegistosRetro.Pages
             }
 
             //Delete entries
-            foreach (var entry in TInvoiceEntry.GetAllFromInvoice(idInvoice))
+            foreach (var entry in TInvoiceEntry.GetAllFromInvoice(Invoice.id))
                 if (!InvoiceEntries.Where(x => x.id == entry.id).Any())
                     Business.TInvoiceEntry.Delete(entry.id);
 
@@ -299,7 +285,7 @@ namespace RegistosRetro.Pages
             }
 
             //Delete payments
-            foreach (var payment in TInvoicePayment.GetAllFromInvoice(idInvoice))
+            foreach (var payment in TInvoicePayment.GetAllFromInvoice(Invoice.id))
                 if (!InvoicePayments.Where(x => x.id == payment.id).Any())
                     Business.TInvoicePayment.Delete(payment.id);
 
@@ -312,7 +298,7 @@ namespace RegistosRetro.Pages
 
             var invoice = Business.TInvoice.Add(selectedClient.id);
 
-            idInvoice = invoice.id;
+            Invoice.id = invoice.id;
 
             foreach (var entry in InvoiceEntries)
                 Business.TInvoiceEntry.Add(invoice.id, TService.GetByReference(entry.ServiceReference).id, entry.Description, entry.Local, entry.Amount, entry.Quantity, entry.ServiceDate);
@@ -396,7 +382,7 @@ namespace RegistosRetro.Pages
                 if (item != null)
                 {
 
-                    if (idInvoice > 0)
+                    if (Invoice.id > 0)
                     {
                         MessageBoxResult result = MessageBox.Show("Tem a certeza que deseja eliminar esta entrada da folha de obra?",
                                                   "Eliminar Entrada Folha de Obra",
@@ -409,7 +395,6 @@ namespace RegistosRetro.Pages
 
                     item.PropertyChanged -= InvoiceEntry_PropertyChanged;
                     InvoiceEntries.Remove(item);
-                    OnPropertyChanged(nameof(TotalAmountSum));
                 }
             }
         }
@@ -425,7 +410,7 @@ namespace RegistosRetro.Pages
                 if (item != null)
                 {
 
-                    if (idInvoice > 0)
+                    if (Invoice.id > 0)
                     {
                         MessageBoxResult result = MessageBox.Show("Tem a certeza que deseja eliminar este pagamento da folha de obra?",
                                                   "Eliminar Pagamaento Folha de Obra",
@@ -438,8 +423,6 @@ namespace RegistosRetro.Pages
 
                     item.PropertyChanged -= InvoicePayment_PropertyChanged;
                     InvoicePayments.Remove(item);
-                    OnPropertyChanged(nameof(TotalPaidSum));
-                    OnPropertyChanged(nameof(TotalNotPaidSum));
                 }
             }
         }
@@ -495,14 +478,10 @@ namespace RegistosRetro.Pages
                     }
                 }
             }
-
-            OnPropertyChanged(nameof(TotalAmountSum));
         }
 
         private void dg_invoicePayments_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            OnPropertyChanged(nameof(TotalPaidSum));
-            OnPropertyChanged(nameof(TotalNotPaidSum));
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -553,7 +532,7 @@ namespace RegistosRetro.Pages
                 }
             }
 
-            OnPropertyChanged(nameof(TotalAmountSum));
+            UpdateInvoiceTotals();
         }
 
         private void InvoicePayment_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -574,15 +553,14 @@ namespace RegistosRetro.Pages
                 }
             }
 
-            OnPropertyChanged(nameof(TotalPaidSum));
-            OnPropertyChanged(nameof(TotalNotPaidSum));
+            UpdateInvoiceTotals();
         }
 
         private void InvoiceEntry_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Helpers.TInvoiceEntry.TotalAmount))
             {
-                OnPropertyChanged(nameof(TotalAmountSum));
+                UpdateInvoiceTotals();
             }
         }
 
@@ -590,14 +568,24 @@ namespace RegistosRetro.Pages
         {
             if (e.PropertyName == nameof(Helpers.TInvoicePayment.Amount))
             {
-                OnPropertyChanged(nameof(TotalPaidSum));
-                OnPropertyChanged(nameof(TotalNotPaidSum));
+                UpdateInvoiceTotals();
             }
+        }
+
+        private void UpdateInvoiceTotals()
+        {
+            if (InvoiceEntries == null || InvoicePayments == null || Invoice == null)
+                return;
+
+            Invoice.TotalAmount = InvoiceEntries.Sum(x => x.TotalAmount);
+            Invoice.Paid = InvoicePayments.Sum(x => x.Amount);
+            Invoice.NotPaid = Invoice.TotalAmount - Invoice.Paid;
         }
 
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

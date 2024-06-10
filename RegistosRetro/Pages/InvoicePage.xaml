@@ -146,9 +146,9 @@
                                DisplayMemberPath="Name"
                                SelectedItem="{Binding SelectedClient}" />
 
-                            <localUC:Input x:Name="inp_totalAmount" LabelText="Total" Mandatory="True" Type="Number" ReadOnly="True" Value="{Binding TotalAmountSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
-                            <localUC:Input x:Name="inp_totalPaid" LabelText="Pago" Mandatory="False" Type="Number" ReadOnly="True" Value="{Binding TotalPaidSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
-                            <localUC:Input x:Name="inp_totalNotPaid" LabelText="Em Dívida" Mandatory="False" Type="Number" ReadOnly="True" Value="{Binding TotalNotPaidSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                            <localUC:Input x:Name="inp_totalAmount" LabelText="Total" Mandatory="True" Type="Text" ReadOnly="True" Value="{Binding Invoice.TotalAmount, StringFormat={}{0:0.00} €, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <localUC:Input x:Name="inp_totalPaid" LabelText="Pago" Mandatory="False" Type="Text" ReadOnly="True" Value="{Binding Invoice.Paid, StringFormat={}{0:0.00} €, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <localUC:Input x:Name="inp_totalNotPaid" LabelText="Em Dívida" Mandatory="False" Type="Text" ReadOnly="True" Value="{Binding Invoice.NotPaid, StringFormat={}{0:0.00} €, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </WrapPanel>
                     </ScrollViewer>
 
