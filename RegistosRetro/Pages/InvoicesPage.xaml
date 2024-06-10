@@ -59,9 +59,9 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                    <Hyperlink>
+                                    <!--<Hyperlink>-->
                                         <Run Text="{Binding Client.Name}" MouseDown="Run_MouseDownClient" Tag="{Binding Client.id}"/>
-                                    </Hyperlink>
+                                    <!--</Hyperlink>-->
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

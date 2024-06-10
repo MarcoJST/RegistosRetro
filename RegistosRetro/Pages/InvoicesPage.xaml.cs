@@ -93,6 +93,7 @@ namespace RegistosRetro.Pages
 
         private void Run_MouseDownClient(object sender, MouseButtonEventArgs e)
         {
+            return;
             int idClient = Convert.ToInt32((sender as Run).Tag.ToString(), new CultureInfo("en-GB"));
             Window parentWindow = Window.GetWindow(this);
             Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
