@@ -15,7 +15,7 @@ namespace RegistosRetro.UserControls
             "Type", typeof(string), typeof(Input), new PropertyMetadata("Text"));
 
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            "Value", typeof(string), typeof(Input), new PropertyMetadata(default(string)));
+            "Value", typeof(string), typeof(Input), new PropertyMetadata(default(string), OnValuePropertyChanged));
 
         public static readonly DependencyProperty ReadOnlyProperty = DependencyProperty.Register(
             "ReadOnly", typeof(bool), typeof(Input), new PropertyMetadata(false));
@@ -62,14 +62,37 @@ namespace RegistosRetro.UserControls
         public Input()
         {
             InitializeComponent();
-            DataContext = this;
+        }
+
+        private static void OnValuePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as Input;
+            if (control != null && control.Type == "Number")
+            {
+                control.Value = control.Value.Replace(",", ".");
+            }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (Type == "Number")
             {
+                if (!string.IsNullOrEmpty(Value))
+                    Value = Value.Replace(",", ".");
+                ucInput.Text = Value;  // Ensure the TextBox displays the formatted value
+                ucInput.TextChanged += TextBox_TextChanged;
                 ucInput.PreviewTextInput += TextBox_PreviewTextInput;
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null && Type == "Number")
+            {
+                string originalText = textBox.Text;
+                textBox.Text = originalText.Replace(",", ".");
+                textBox.SelectionStart = originalText.Length;
             }
         }
 
@@ -77,12 +100,11 @@ namespace RegistosRetro.UserControls
         {
             TextBox textBox = sender as TextBox;
 
-            if (!char.IsDigit(e.Text, e.Text.Length - 1) && e.Text != ","
-                || textBox.Text.Contains(",") && e.Text == ",")
+            if (!char.IsDigit(e.Text, e.Text.Length - 1) && e.Text != "."
+                || textBox.Text.Contains(".") && e.Text == ".")
             {
                 e.Handled = true;
             }
         }
-
     }
 }

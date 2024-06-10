@@ -1,16 +1,317 @@
 ﻿<Page x:Class="RegistosRetro.Pages.InvoicePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:RegistosRetro.Pages"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Folha de Obra"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
+      mc:Ignorable="d"
+      Title="{Binding InvoiceTitle}"
       Loaded="Page_Loaded"
-      >
+      x:Name="InvoicePageName">
+
+    <Page.Resources>
+        <!-- DataGrid Column Templates -->
+        <DataTemplate x:Key="ServiceReferenceColumnTemplate">
+            <TextBlock Text="{Binding ServiceReference}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceNameColumnTemplate">
+            <TextBlock Text="{Binding ServiceName}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceNameEditTemplate">
+            <ComboBox ItemsSource="{Binding DataContext.ServiceList, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                  DisplayMemberPath="Service"
+                  SelectedValuePath="Service"
+                  SelectedValue="{Binding ServiceName, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionChanged="ComboBox_SelectionChanged"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceDateColumnTemplate">
+            <TextBlock Text="{Binding ServiceDate, StringFormat={}{0:dd/MM/yyyy}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServiceDateEditTemplate">
+            <DatePicker Padding="0" Margin="0" SelectedDate="{Binding ServiceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedDateFormat="Short">
+                <DatePicker.Resources>
+                    <Style TargetType="DatePicker">
+                        <EventSetter Event="PreviewKeyDown" Handler="DatePicker_PreviewKeyDown" />
+                    </Style>
+                </DatePicker.Resources>
+            </DatePicker>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DescriptionColumnTemplate">
+            <TextBlock Text="{Binding Description}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="LocalColumnTemplate">
+            <TextBlock Text="{Binding Local}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="AmountColumnTemplate">
+            <TextBlock Text="{Binding Amount}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="QuantityColumnTemplate">
+            <TextBlock Text="{Binding Quantity}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="TotalAmountColumnTemplate">
+            <TextBlock Text="{Binding TotalAmount}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="DeleteColumnTemplate">
+            <Button Click="DeleteButton_Click" Background="Transparent" BorderBrush="{x:Null}"
+                FocusVisualStyle="{x:Null}" Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                <Icon:PackIconMaterial Foreground="Red" Height="13" Kind="TrashCan" />
+            </Button>
+        </DataTemplate>
+
+        <!-- Style for the DataGrid with Footer -->
+        <Style x:Key="DataGridWithFooterStyle" TargetType="{x:Type DataGrid}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGrid">
+                        <StackPanel>
+                            <DataGrid Name="PART_DataGrid" ItemsSource="{TemplateBinding ItemsSource}" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Ref." Width="60" CellTemplate="{StaticResource ServiceReferenceColumnTemplate}" />
+                                    <DataGridTemplateColumn Header="Serviço" Width="120" CellTemplate="{StaticResource ServiceNameColumnTemplate}" CellEditingTemplate="{StaticResource ServiceNameEditTemplate}" />
+                                    <DataGridTemplateColumn Header="Data" Width="120" CellTemplate="{StaticResource ServiceDateColumnTemplate}" CellEditingTemplate="{StaticResource ServiceDateEditTemplate}" />
+                                    <DataGridTextColumn Header="Descrição" Binding="{Binding Description}" />
+                                    <DataGridTemplateColumn Header="Local" Width="120" CellTemplate="{StaticResource LocalColumnTemplate}" />
+                                    <DataGridTemplateColumn Header="Valor" Width="70" CellTemplate="{StaticResource AmountColumnTemplate}" />
+                                    <DataGridTemplateColumn Header="QTD." Width="70" CellTemplate="{StaticResource QuantityColumnTemplate}" />
+                                    <DataGridTemplateColumn Header="Total" Width="70" CellTemplate="{StaticResource TotalAmountColumnTemplate}" IsReadOnly="True" />
+                                    <DataGridTemplateColumn Width="25" CellTemplate="{StaticResource DeleteColumnTemplate}" IsReadOnly="True" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border BorderBrush="Gray" BorderThickness="1,0,1,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="70" />
+                                        <ColumnDefinition Width="25" />
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Define Footer Columns here -->
+                                    <TextBlock Grid.Column="0" Text="Total" FontWeight="Bold" VerticalAlignment="Center" Margin="8,0,8,0" />
+                                    <TextBlock Grid.Column="7" Text="{Binding Path=TotalAmountSum, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" FontWeight="Bold" VerticalAlignment="Center" Margin="8,0,8,0" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <localUC:BorderedTitle Title="{Binding InvoiceTitle}" TitleFontSize="22" TitleFontWeight="DemiBold" TitleForeground="#2F2F2F"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="65" />
+                    <!--<RowDefinition Height="40" />-->
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <WrapPanel x:Name="wrapPanel" Orientation="Horizontal" Margin="10,0,10,0">
+                            <localUC:ComboBoxInput x:Name="inp_client"
+                               WidthType="Very-Large"
+                               LabelText="Cliente"
+                               Mandatory="True"
+                               ItemsSource="{Binding ClientsList}"
+                               DisplayMemberPath="Name"
+                               SelectedItem="{Binding SelectedClient}" />
+
+                            <localUC:Input x:Name="inp_totalAmount" LabelText="Total" Mandatory="True" Type="Number" ReadOnly="True" Value="{Binding TotalAmountSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                            <localUC:Input x:Name="inp_totalPaid" LabelText="Pago" Mandatory="False" Type="Number" ReadOnly="True" Value="{Binding TotalPaidSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                            <localUC:Input x:Name="inp_totalNotPaid" LabelText="Em Dívida" Mandatory="False" Type="Number" ReadOnly="True" Value="{Binding TotalNotPaidSum, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                        </WrapPanel>
+                    </ScrollViewer>
+
+                </Grid>
+                <Grid Grid.Row="1">
+                    <TabControl Margin="0, 15, 0, 0">
+                        <TabItem Header="Serviços">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="5 0 0 0" MaxWidth="130" HorizontalAlignment="Left">
+                                    <localUC:Button x:Name="btn_addNewRow"  Click="btn_addNewRow_click" Text="Nova Linha" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
+                                </Grid>
+                                <Grid Grid.Row="2">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <WrapPanel x:Name="wrapPanel_sup" Orientation="Horizontal" Margin="0,0,0,0">
+                                            <DataGrid HorizontalAlignment="Stretch"
+                                              AutoGenerateColumns="False"
+                                              ColumnWidth="*"
+                                              HorizontalScrollBarVisibility="Auto" 
+                                              CanUserResizeColumns="False"
+                                              CanUserResizeRows="False"
+                                              CanUserReorderColumns="False"
+                                              Padding="8,0,8,8"
+                                              Name="dg_invoiceEntries"
+                                              CanUserAddRows="False"
+                                              CellEditEnding="dg_invoiceEntries_CellEditEnding">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn x:Name="dg_serviceReference" Width="60" Header="Ref." Binding="{Binding ServiceReference}"/>
+
+                                                    <DataGridTemplateColumn x:Name="dg_serviceName" Width="120" Header="Serviço">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding ServiceName}"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                                            <DataTemplate>
+                                                                <ComboBox ItemsSource="{Binding DataContext.ServiceList, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    DisplayMemberPath="Service"
+                                                    SelectedValuePath="Service"
+                                                    SelectedValue="{Binding ServiceName, UpdateSourceTrigger=PropertyChanged}"
+                                                    SelectionChanged="ComboBox_SelectionChanged"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                                    </DataGridTemplateColumn>
+
+                                                    <DataGridTemplateColumn x:Name="dg_date" Width="120" Header="Data">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding ServiceDate, StringFormat={}{0:dd/MM/yyyy}}"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                                            <DataTemplate>
+                                                                <DatePicker Padding="0" Margin="0" SelectedDate="{Binding ServiceDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedDateFormat="Short">
+                                                                    <DatePicker.Resources>
+                                                                        <Style TargetType="DatePicker">
+                                                                            <EventSetter Event="PreviewKeyDown" Handler="DatePicker_PreviewKeyDown"/>
+                                                                        </Style>
+                                                                    </DatePicker.Resources>
+                                                                </DatePicker>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                                    </DataGridTemplateColumn>
+
+                                                    <DataGridTextColumn x:Name="dg_description" Header="Descrição" Binding="{Binding Description}"/>
+                                                    <DataGridTextColumn x:Name="dg_local" Width="120" Header="Local" Binding="{Binding Local}"/>
+                                                    <DataGridTextColumn x:Name="dg_amount" Width="70" Header="Valor" Binding="{Binding Amount}"/>
+                                                    <DataGridTextColumn x:Name="dg_quantity" Width="70" Header="QTD." Binding="{Binding Quantity}"/>
+                                                    <DataGridTextColumn x:Name="dg_total" Width="70" IsReadOnly="True" Header="Total" Binding="{Binding TotalAmount, StringFormat={}{0:0.00} €}"/>
+                                                    <DataGridTemplateColumn Width="25" IsReadOnly="True" x:Name="dg_delete">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Button Click="DeleteButton_Click" Background="Transparent" BorderBrush="{x:Null}"
+                                                        FocusVisualStyle="{x:Null}" Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                                                                    <Icon:PackIconMaterial Foreground="Red" Height="13" Kind="TrashCan"/>
+                                                                </Button>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </WrapPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Pagamentos">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="5 0 0 0" MaxWidth="130" HorizontalAlignment="Left">
+                                    <localUC:Button x:Name="btn_addNewRowPayment"  Click="btn_addNewRowPayment_click" Text="Nova Linha" Kind="PlusCircle" Background="#2F2F2F" Foreground="White"/>
+                                </Grid>
+                                <Grid Grid.Row="2">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <WrapPanel x:Name="wrapPanel_sup_payment" Orientation="Horizontal" Margin="0,0,0,0">
+                                            <DataGrid HorizontalAlignment="Stretch"
+                                              AutoGenerateColumns="False"
+                                              ColumnWidth="*"
+                                              HorizontalScrollBarVisibility="Auto" 
+                                              CanUserResizeColumns="False"
+                                              CanUserResizeRows="False"
+                                              CanUserReorderColumns="False"
+                                              Padding="8,0,8,8"
+                                              Name="dg_invoicePayments"
+                                              CanUserAddRows="False"
+                                              CellEditEnding="dg_invoicePayments_CellEditEnding">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn x:Name="dg_paymentamount" Width="70" Header="Valor" Binding="{Binding Amount}"/>
+                                                    <DataGridTextColumn x:Name="dg_paymentObservations" Header="Observações" Binding="{Binding Observations}"/>
+                                                    <DataGridTemplateColumn x:Name="dg_paymentDate" Width="120" Header="Data">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding PaymentDate, StringFormat={}{0:dd/MM/yyyy}}"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                                            <DataTemplate>
+                                                                <DatePicker Padding="0" Margin="0" SelectedDate="{Binding PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedDateFormat="Short">
+                                                                    <DatePicker.Resources>
+                                                                        <Style TargetType="DatePicker">
+                                                                            <EventSetter Event="PreviewKeyDown" Handler="DatePicker_PreviewKeyDown"/>
+                                                                        </Style>
+                                                                    </DatePicker.Resources>
+                                                                </DatePicker>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                                    </DataGridTemplateColumn>
+
+                                                    <DataGridTemplateColumn Width="25" IsReadOnly="True" x:Name="dg_deletePayment">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Button Click="DeletePaymentButton_Click" Background="Transparent" BorderBrush="{x:Null}"
+                                                                    FocusVisualStyle="{x:Null}" Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                                                                    <Icon:PackIconMaterial Foreground="Red" Height="13" Kind="TrashCan"/>
+                                                                </Button>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </WrapPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                    
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 10 10 50">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <localUC:Button x:Name="btn_Save" Click="btn_Save_Click"  Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="150"/>
+                    <localUC:Button x:Name="btn_Delete" Click="btn_Delete_Click" Text="Eliminar" Kind="Delete" Background="Red" Foreground="White" MinWidth="150" Margin="15 0 0 0"/>
+                    <localUC:Button x:Name="btn_Cancel" Click="btn_Cancel_Click" Text="Cancelar" Kind="Cancel" Background="#808080" Foreground="White" MinWidth="150" Margin="15 0 0 0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

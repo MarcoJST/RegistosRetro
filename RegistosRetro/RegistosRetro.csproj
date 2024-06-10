@@ -85,6 +85,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\TClient.cs" />
+    <Compile Include="Helpers\TInvoice.cs" />
+    <Compile Include="Helpers\TInvoicePayment.cs" />
+    <Compile Include="Helpers\TService.cs" />
     <Compile Include="Helpers\TInvoiceEntry.cs" />
     <Compile Include="Pages\ClientPage.xaml.cs">
       <DependentUpon>ClientPage.xaml</DependentUpon>
@@ -94,9 +98,6 @@
     </Compile>
     <Compile Include="Pages\InvoicePage.xaml.cs">
       <DependentUpon>InvoicePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\NewInvoicePage.xaml.cs">
-      <DependentUpon>NewInvoicePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\NewServicePage.xaml.cs">
       <DependentUpon>NewServicePage.xaml</DependentUpon>
@@ -155,15 +156,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\InvoicePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\InvoicesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\NewInvoicePage.xaml">
+    <Page Include="Pages\InvoicePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

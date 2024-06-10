@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace Business
 {
@@ -66,6 +67,18 @@ namespace Business
             return result;
         }
 
+        public static List<TInvoiceEntry> GetAllFromService(int idService)
+        {
+            var db = new RegistosRetroDB();
+            var result = new List<TInvoiceEntry>();
+            var dbResult = new List<InvoicesEntries>();
+            dbResult = db.InvoicesEntries.Where(x => x.Service == idService).ToList();
+
+            foreach (var item in dbResult)
+                result.Add(ConvertDatabaseObject(item));
+            return result;
+        }
+
         public static TInvoiceEntry Add(int idInvoice, int idService, string description, string local, 
             decimal amount, decimal quantity, DateTime serviceDate)
         {
@@ -100,6 +113,7 @@ namespace Business
             dbResult.CreationDate = DateTime.Now;
             dbResult.ServiceDate = serviceDate;
             db.SaveChanges();
+            TInvoice.UpdateTotalAmount(dbResult.Invoice);
             return ConvertDatabaseObject(dbResult);
         }
 
@@ -107,8 +121,10 @@ namespace Business
         {
             var db = new RegistosRetroDB();
             var dbResult = db.InvoicesEntries.Where(x => x.id == id).Single();
+            int idInvoice = dbResult.Invoice;
             db.InvoicesEntries.Remove(dbResult);
             db.SaveChanges();
+            TInvoice.UpdateTotalAmount(idInvoice);
         }
     }
 }

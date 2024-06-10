@@ -106,10 +106,13 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
-        public static bool Exists(string service)
+        public static bool Exists(string service, int id = 0)
         {
             var db = new RegistosRetroDB();
-            return db.Services.Where(x => x.Service.ToLower().Trim() == service.ToLower().Trim() && x.Active).Any();
+            if (id <= 0)
+                return db.Services.Where(x => x.Service.ToLower().Trim() == service.ToLower().Trim() && x.Active).Any();
+            else
+                return db.Services.Where(x => x.Service.ToLower().Trim() == service.ToLower().Trim() && x.Active && x.id != id).Any();
         }
 
         public static void Delete(int id)
@@ -120,10 +123,13 @@ namespace Business
             db.SaveChanges();
         }
 
-        public static bool ExistsByReference(string reference)
+        public static bool ExistsByReference(string reference, int id = 0)
         {
             var db = new RegistosRetroDB();
-            return db.Services.Where(x => x.Reference.ToLower().Trim() == reference.ToLower().Trim() && x.Active).Any();
+            if (id <= 0)
+                return db.Services.Where(x => x.Reference.ToLower().Trim() == reference.ToLower().Trim() && x.Active).Any();
+            else
+                return db.Services.Where(x => x.Reference.ToLower().Trim() == reference.ToLower().Trim() && x.Active && x.id != id).Any();
         }
 
         public static TService GetByReference(string reference)

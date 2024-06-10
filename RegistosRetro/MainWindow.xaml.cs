@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -22,11 +23,12 @@ namespace RegistosRetro
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private Button lastSelectedButton;
+        private bool isMaximized = false;
 
         public MainWindow()
         {
             InitializeComponent();
+            this.Closing += MainWindow_Closing;
         }
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
@@ -38,31 +40,10 @@ namespace RegistosRetro
 
         private void SideBarButton_Click(object sender, RoutedEventArgs e)
         {
-            // Reset properties for the previously selected button
-            if (lastSelectedButton != null)
-            {
-                lastSelectedButton.Background = Brushes.Transparent;
-                lastSelectedButton.Foreground = Brushes.White;
-                lastSelectedButton.FontWeight = FontWeights.Regular;
-            }
+            ToggleButton clickedButton = sender as ToggleButton;
 
-            // Set properties for the currently selected button
-            Button clickedButton = sender as Button;
-            // Define colors using Color structure
-            Color backgroundColor = (Color)ColorConverter.ConvertFromString("#F4CA4A");
-            Color foregroundColor = (Color)ColorConverter.ConvertFromString("#2F2F2F");
-
-            // Create SolidColorBrushes using defined colors
-            SolidColorBrush backgroundBrush = new SolidColorBrush(backgroundColor);
-            SolidColorBrush foregroundBrush = new SolidColorBrush(foregroundColor);
-
-            // Set properties of the clicked button
-            clickedButton.Background = backgroundBrush;
-            clickedButton.Foreground = foregroundBrush;
-            clickedButton.FontWeight = FontWeights.DemiBold;
-
-            lastSelectedButton = clickedButton;
-
+            SelectMenuButton(clickedButton.Name);
+        
             if (clickedButton.Name == "home_btn")
                 pageFrame.NavigationService.Navigate(new HomePage());
             else if (clickedButton.Name == "clients_btn")
@@ -79,11 +60,70 @@ namespace RegistosRetro
                 pageFrame.NavigationService.Navigate(new GasPage());
         }
 
+        public void SelectMenuButton(string buttonName)
+        {
+            foreach (var child in FindVisualChildren<ToggleButton>(this))
+            {
+                if (child.Name == buttonName)
+                    child.IsChecked = true;
+                else
+                    child.IsChecked = false;
+            }
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            home_btn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            services_btn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            home_btn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            clients_btn.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
+
+        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (isMaximized)
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.Width = 1080;
+                    this.Height = 720;
+
+                    isMaximized = false;
+                }
+                else
+                {
+                    this.WindowState = WindowState.Maximized;
+                    isMaximized = true;
+                }
+            }
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+#if DEBUG
+            return;
+#endif
+
+            Business.RemoteDB.CopyToRemoteDB();
+        }
+
     }
 }

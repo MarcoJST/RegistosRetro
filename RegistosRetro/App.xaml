@@ -40,7 +40,7 @@
             </Style>
 
             <!--SideBar Menu Item-->
-            <Style x:Key="menuButton" TargetType="Button">
+            <Style x:Key="menuButton" TargetType="ToggleButton">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -50,7 +50,7 @@
                 <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="Button">
+                        <ControlTemplate TargetType="ToggleButton">
                             <Border Background="{TemplateBinding Background}" CornerRadius="7">
                                 <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
                             </Border>
@@ -59,6 +59,11 @@
                 </Setter>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#F4CA4A" />
+                        <Setter Property="Foreground" Value="#2F2F2F" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="True">
                         <Setter Property="Background" Value="#F4CA4A" />
                         <Setter Property="Foreground" Value="#2F2F2F" />
                         <Setter Property="FontWeight" Value="DemiBold" />
@@ -72,6 +77,72 @@
                 <Setter Property="Height" Value="15"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
                 <Setter Property="Margin" Value="20 2 20 0"></Setter>
+            </Style>
+
+            <!-- Custom TabControl Style -->
+            <Style TargetType="TabControl">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabControl">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TabPanel Grid.Row="0"
+                                          Background="{TemplateBinding Background}"
+                                          IsItemsHost="True"
+                                          Margin="12,0"/>
+                                <Border Grid.Row="1"
+                                        BorderBrush="#2F2F2F"
+                                        BorderThickness="0,1,0,0"
+                                        Margin="10, 0, 10, 0">
+                                    <ContentPresenter ContentSource="SelectedContent"
+                                                      Margin="{TemplateBinding Padding}"/>
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Custom TabItem Style -->
+            <Style TargetType="TabItem">
+                <Setter Property="MinWidth" Value="100" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Grid>
+                                <Border x:Name="Bd"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="1,1,1,0"
+                                        CornerRadius="7 7 0 0"
+                                        Padding="10,5"
+                                        Cursor="Hand"
+                                        Margin="5 5 0 0">
+                                    <ContentPresenter x:Name="ContentSite"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      ContentSource="Header"/>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="#2F2F2F"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#2F2F2F"/>
+                                    <Setter Property="Panel.ZIndex" Value="1"/>
+                                    <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="#F4CA4A"/>
+                                    <Setter TargetName="ContentSite" Property="TextElement.FontWeight" Value="DemiBold"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="False">
+                                    <Setter TargetName="Bd" Property="Background" Value="White"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#2F2F2F"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
         </ResourceDictionary>

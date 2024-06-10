@@ -10,11 +10,11 @@
 
     <StackPanel Margin="5 5 20 5">
         <TextBlock FontWeight="DemiBold" FontSize="13" HorizontalAlignment="Left" Margin="3,0,0,3">
-            <TextBlock Text="{Binding LabelText}" />
-            <TextBlock Text="*" Foreground="Red" Visibility="{Binding Mandatory, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="Campo Obrigatório!"/>
+            <TextBlock Text="{Binding LabelText, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" />
+            <TextBlock Text="*" Foreground="Red" Visibility="{Binding Mandatory, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" ToolTip="Campo Obrigatório!"/>
         </TextBlock>
-        <TextBox FontSize="13" Name="ucInput" HorizontalAlignment="Left" Padding="5" Text="{Binding Value}"
-                     IsReadOnly="{Binding ReadOnly, RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <TextBox FontSize="13" Name="ucInput" HorizontalAlignment="Left" Padding="5" Text="{Binding Value, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                     IsReadOnly="{Binding ReadOnly, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}">
             <TextBox.Template>
                 <ControlTemplate TargetType="TextBox">
                     <Border CornerRadius="3" BorderBrush="#ccc" BorderThickness="1">
@@ -28,16 +28,16 @@
             <TextBox.Style>
                 <Style TargetType="TextBox">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding WidthType}" Value="Small">
+                        <DataTrigger Binding="{Binding WidthType, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" Value="Small">
                             <Setter Property="Width" Value="50"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding WidthType}" Value="Medium">
+                        <DataTrigger Binding="{Binding WidthType, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" Value="Medium">
                             <Setter Property="Width" Value="100"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding WidthType}" Value="Large">
+                        <DataTrigger Binding="{Binding WidthType, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" Value="Large">
                             <Setter Property="Width" Value="150"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding WidthType}" Value="Very-Large">
+                        <DataTrigger Binding="{Binding WidthType, RelativeSource={RelativeSource AncestorType={x:Type local:Input}}}" Value="Very-Large">
                             <Setter Property="Width" Value="200"/>
                         </DataTrigger>
                     </Style.Triggers>

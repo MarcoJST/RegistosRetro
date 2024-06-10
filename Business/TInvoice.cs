@@ -75,15 +75,12 @@ namespace Business
             }
         }
 
-        public static List<TInvoice> GetAllFromClient(int idClient, bool withClosedOnes = true)
+        public static List<TInvoice> GetAllFromClient(int idClient)
         {
             var db = new RegistosRetroDB();
             var result = new List<TInvoice>();
             var dbResult = new List<Invoices>();
-            if (withClosedOnes)
-                dbResult = db.Invoices.Where(x => x.Active && x.Client == idClient).ToList();
-            else
-                dbResult = db.Invoices.Where(x => x.Active && x.Closed && x.Client == idClient).ToList();
+            dbResult = db.Invoices.Where(x => x.Active && x.Client == idClient).ToList();
 
             foreach (var item in dbResult)
                 result.Add(ConvertDatabaseObject(item));
@@ -127,12 +124,22 @@ namespace Business
             return invoice.TotalAmount - GetPaidValue(idInvoice);
         }
 
-        public static void UpdateTotalAmount(int id)
+        public static TInvoice UpdateTotalAmount(int id)
         {
             var db = new RegistosRetroDB();
             var invoice = db.Invoices.Where(x=> x.id == id).Single();
             invoice.TotalAmount = db.InvoicesEntries.Where(x=> x.Invoice == id).Sum(x=> x.TotalAmount);
             db.SaveChanges();
+            return ConvertDatabaseObject(invoice);
+        }
+
+        public static TInvoice UpdateClient(int idInvoice, int idClient)
+        {
+            var db = new RegistosRetroDB();
+            var invoice = db.Invoices.Where(x => x.id == idInvoice).Single();
+            invoice.Client = idClient;
+            db.SaveChanges();
+            return ConvertDatabaseObject(invoice);
         }
     }
 }

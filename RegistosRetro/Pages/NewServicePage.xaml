@@ -30,12 +30,15 @@
                     <WrapPanel x:Name="wrapPanel" Orientation="Horizontal" Margin="10">
                         <localUC:Input x:Name="inp_reference" WidthType="Medium" LabelText="Referência" Mandatory="True"/>
                         <localUC:Input x:Name="inp_service" WidthType="Very-Large" LabelText="Serviço" Mandatory="True"/>
-                        <localUC:Input x:Name="inp_amount" LabelText="Preço" Mandatory="True" Type="Number"/>
+                        <localUC:Input x:Name="inp_amount" LabelText="Preço" Mandatory="True" Type="Number" />
                     </WrapPanel>
                 </ScrollViewer>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 10 10 50">
-                <localUC:Button Click="Button_Click" Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="200"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <localUC:Button x:Name="btn_Save" Click="btn_Save_Click"  Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="150"/>
+                    <localUC:Button x:Name="btn_Cancel" Click="btn_Cancel_Click" Text="Cancelar" Kind="Cancel" Background="#808080" Foreground="White" MinWidth="150" Margin="15 0 0 0"/>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

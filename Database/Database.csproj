@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistosRetroRemote\Debts.cs" />
+    <Compile Include="RegistosRetroRemote\RegistosRetroRemoteDB.cs" />
     <Compile Include="RegistosRetro\Clients.cs" />
     <Compile Include="RegistosRetro\InvoicePayments.cs" />
     <Compile Include="RegistosRetro\Invoices.cs" />

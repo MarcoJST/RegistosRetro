@@ -1,6 +1,7 @@
 ﻿using Business;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +27,16 @@ namespace RegistosRetro.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Window parentWindow = Window.GetWindow(this);
+            MainWindow mainWindow = parentWindow as MainWindow;
             Frame frame = parentWindow.FindName("pageFrame") as Frame;
+
+            if (mainWindow != null)
+                mainWindow.SelectMenuButton("services_btn");
             if (frame != null)
                 frame.NavigationUIVisibility = NavigationUIVisibility.Visible;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
             string reference = inp_reference.ucInput.Text.Trim();
             string service = inp_service.ucInput.Text.Trim();
@@ -49,7 +54,13 @@ namespace RegistosRetro.Pages
                 return;
             }
 
-            var newService = Business.TService.Add(reference, service, Convert.ToDecimal(amount));
+            if (Business.TService.ExistsByReference(reference))
+            {
+                MessageBox.Show("Já existe um serviço com a referência \"" + reference + "\"!", "Serviço Existente", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var newService = Business.TService.Add(reference, service, Convert.ToDecimal(amount, new CultureInfo("en-GB")));
             MessageBox.Show("Serviço adicionado com sucesso!", "Serviço Adicionado", MessageBoxButton.OK, MessageBoxImage.Information);
 
             Window parentWindow = Window.GetWindow(this);
@@ -57,6 +68,15 @@ namespace RegistosRetro.Pages
 
             if (pageFrame != null)
                 pageFrame.Navigate(new ServicePage(newService.id));
+        }
+
+        private void btn_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Window parentWindow = Window.GetWindow(this);
+            Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
+
+            if (pageFrame != null)
+                pageFrame.Navigate(new ServicesPage());
         }
     }
 }

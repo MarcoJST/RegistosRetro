@@ -4,12 +4,119 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ClientPage"
+      Title="{Binding Client.PageTitle, UpdateSourceTrigger=PropertyChanged}"
       Loaded="Page_Loaded">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <localUC:BorderedTitle Title="{Binding Client.PageTitle, UpdateSourceTrigger=PropertyChanged}" TitleFontSize="22" TitleFontWeight="DemiBold" TitleForeground="#2F2F2F"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <TabControl>
+                <TabItem Header="Geral">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="100" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <WrapPanel x:Name="wrapPanel" Orientation="Horizontal" Margin="10">
+                                    <localUC:Input x:Name="inp_id" WidthType="Small" LabelText="id" Mandatory="False" ReadOnly="True" Value="{Binding Client.id, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_name" WidthType="Very-Large" LabelText="Nome" Mandatory="True" Value="{Binding Client.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_Address" WidthType="Very-Large" LabelText="Morada" Value="{Binding Client.Address, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_Phone" WidthType="Medium" LabelText="Telefone" Value="{Binding Client.Phone, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_Email" WidthType="Very-Large" LabelText="Email" Value="{Binding Client.Email, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_invoiced" LabelText="Faturado" Mandatory="False" ReadOnly="True" Type="Number" Value="{Binding Client.Invoiced, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_paid" LabelText="Pago" Mandatory="False" ReadOnly="True" Type="Number" Value="{Binding Client.Paid, StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_unpaid" LabelText="Por Pagar" Mandatory="False" ReadOnly="True" Type="Number" Value="{Binding Client.NotPaid,StringFormat={}{0:0.00} €, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <localUC:Input x:Name="inp_creationDate" LabelText="Data Criação" Mandatory="False" ReadOnly="True" Type="Number" Value="{Binding Client.CreationDate, StringFormat={}{0:dd/MM/yyyy}, UpdateSourceTrigger=PropertyChanged}"/>
+                                </WrapPanel>
+                            </ScrollViewer>
+                        </Grid>
+                        <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10 10 10 50">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <localUC:Button x:Name="btn_Save" Click="btn_Save_Click"  Text="Guardar" Kind="ContentSave" Background="#2F2F2F" Foreground="White" MinWidth="150"/>
+                                <localUC:Button x:Name="btn_Delete" Click="btn_Delete_Click" Text="Eliminar" Kind="Delete" Background="Red" Foreground="White" MinWidth="150" Margin="15 0 0 0"/>
+                                <localUC:Button x:Name="btn_Cancel" Click="btn_Cancel_Click" Text="Cancelar" Kind="Cancel" Background="#808080" Foreground="White" MinWidth="150" Margin="15 0 0 0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                </TabItem>
+                <TabItem Header="Histórico">
+                    <Grid>
+                        <DataGrid HorizontalAlignment="Stretch"
+                        AutoGenerateColumns="False"
+                        Loaded="DataGrid_Loaded"
+                        ColumnWidth="*"
+                        HorizontalScrollBarVisibility="Auto" 
+                        CanUserResizeColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserReorderColumns="False"
+                        Padding="8"
+                        Name="dg_services"
+                        CanUserAddRows="False">
+
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="FO" x:Name="dg_invoice" Width="40" IsReadOnly="True" SortMemberPath="idInvoice">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Hyperlink>
+                                                    <Run Text="{Binding id}" MouseDown="Run_MouseDown_dg_Invoice" Tag="{Binding id}"/>
+                                                </Hyperlink>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="Cliente" SortMemberPath="Client.Name">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Hyperlink>
+                                                    <Run Text="{Binding ClientName}" MouseDown="Run_MouseDownClient" Tag="{Binding idClient}"/>
+                                                </Hyperlink>        
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Total" SortMemberPath="TotalAmount" Binding="{Binding TotalAmount, StringFormat={}{0:0.00} €}" Width="100" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Pago" Binding="{Binding Paid, StringFormat={}{0:0.00} €}" IsReadOnly="True" Width="100" />
+                                <DataGridTextColumn Header="Em Dívida" Binding="{Binding NotPaid, StringFormat={}{0:0.00} €}" IsReadOnly="True" Width="100" />
+                                <DataGridTextColumn Header="Data" Binding="{Binding CreationDate, StringFormat={}{0:dd/MM/yyyy}}" IsReadOnly="True" Width="100" />
+
+                                <DataGridTemplateColumn x:Name="dg_invoiceLink" Header="" CanUserSort="False" Width="25">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock HorizontalAlignment="Center">
+                                             <Hyperlink TextDecorations="None">
+                                                 <Button Click="dg_invoiceLink_Click" Tag="{Binding id}" Background="Transparent" BorderBrush="{x:Null}"
+                                                    FocusVisualStyle="{x:Null}" Padding="3 0 3 0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                                                        <Icon:PackIconMaterial Foreground="#72a7cf" Height="15" Kind="Magnify" />
+                                                    </Button>
+                                             </Hyperlink>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
     </Grid>
 </Page>

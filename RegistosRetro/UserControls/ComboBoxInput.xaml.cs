@@ -23,6 +23,9 @@ namespace RegistosRetro.UserControls
         public static readonly DependencyProperty MandatoryProperty = DependencyProperty.Register(
             "Mandatory", typeof(bool), typeof(ComboBoxInput), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty DisplayMemberPathProperty = DependencyProperty.Register(
+            "DisplayMemberPath", typeof(string), typeof(ComboBoxInput), new PropertyMetadata(default(string)));
+
         public string WidthType
         {
             get { return (string)GetValue(WidthTypeProperty); }
@@ -59,10 +62,15 @@ namespace RegistosRetro.UserControls
             set { SetValue(MandatoryProperty, value); }
         }
 
+        public string DisplayMemberPath
+        {
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
+        }
+
         public ComboBoxInput()
         {
             InitializeComponent();
-            DataContext = this;
         }
     }
 }

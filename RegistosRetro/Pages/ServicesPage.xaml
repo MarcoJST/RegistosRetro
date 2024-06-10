@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RegistosRetro.Pages"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:localUC="clr-namespace:RegistosRetro.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -55,8 +56,39 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Width="80" Header="Preço" Binding="{Binding Amount, StringFormat={}{0} €}" IsReadOnly="True" />
+                    <DataGridTextColumn Width="80" Header="Preço" Binding="{Binding Amount, StringFormat={}{0:0.00} €}" IsReadOnly="True" />
                     <DataGridTextColumn Width="220" Header="Criado Em" Binding="{Binding CreationDate, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" IsReadOnly="True" />
+
+                    <DataGridTemplateColumn x:Name="dg_delete" Header="" CanUserSort="False" Width="25">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center">
+                                 <Hyperlink TextDecorations="None">
+                                     <Button Click="dg_delete_Click" Tag="{Binding id}" Background="Transparent" BorderBrush="{x:Null}"
+                                        FocusVisualStyle="{x:Null}" Padding="3 0 3 0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                                            <Icon:PackIconMaterial Foreground="Red" Height="15" Kind="TrashCan" />
+                                        </Button>
+                                 </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn x:Name="dg_ServiceLink" Header="" CanUserSort="False" Width="25">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center">
+                                 <Hyperlink TextDecorations="None">
+                                     <Button Click="dg_ServiceLink_Click" Tag="{Binding id}" Background="Transparent" BorderBrush="{x:Null}"
+                                        FocusVisualStyle="{x:Null}" Padding="3 0 3 0" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+                                            <Icon:PackIconMaterial Foreground="#72a7cf" Height="15" Kind="Magnify" />
+                                        </Button>
+                                 </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

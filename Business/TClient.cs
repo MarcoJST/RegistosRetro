@@ -14,6 +14,9 @@ namespace Business
         public string Address { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public decimal Invoiced { get; set; }
+        public decimal Paid { get; set; }
+        public decimal NotPaid { get; set; }
         public DateTime CreationDate { get; set; }
 
         public TClient() { 
@@ -22,11 +25,15 @@ namespace Business
             Address = "";
             Phone = "";
             Email = "";
+            Invoiced = 0;
+            Paid = 0;
+            NotPaid = 0;
             CreationDate = new DateTime();
         }
 
         private static TClient ConvertDatabaseObject(Clients dbObject)
         {
+            var invoices = TInvoice.GetAllFromClient(dbObject.id);
             var result = new TClient();
             result.id = dbObject.id;
             result.Name = dbObject.Name;
@@ -34,6 +41,9 @@ namespace Business
             result.Phone = dbObject.Phone;
             result.Email = dbObject.Email;
             result.CreationDate = dbObject.CreationDate;
+            result.Invoiced = invoices.Sum(x=> x.TotalAmount);
+            result.Paid = invoices.Sum(x=> x.Paid);
+            result.NotPaid = invoices.Sum(x=> x.NotPaid);
             return result;
         }
 
@@ -141,28 +151,37 @@ namespace Business
             return ConvertDatabaseObject(dbResult);
         }
 
-        public static bool Exists(string name)
+        public static bool Exists(string name, int id = 0)
         {
             var db = new RegistosRetroDB();
-            return db.Clients.Where(x => x.Name.ToLower().Trim() == name.ToLower().Trim() && x.Active).Any();
+            if (id <= 0)
+                return db.Clients.Where(x => x.Name.ToLower().Trim() == name.ToLower().Trim() && x.Active).Any();
+            else
+                return db.Clients.Where(x => x.Name.ToLower().Trim() == name.ToLower().Trim() && x.Active && x.id != id).Any();
         }
 
-        public static bool ExistsByEmail(string email)
+        public static bool ExistsByEmail(string email, int id = 0)
         {
             if (string.IsNullOrEmpty(email.Trim()))
                 return false;
 
             var db = new RegistosRetroDB();
-            return db.Clients.Where(x => x.Email.ToLower().Trim() == email.ToLower().Trim() && x.Active).Any();
+            if (id <= 0)
+                return db.Clients.Where(x => x.Email.ToLower().Trim() == email.ToLower().Trim() && x.Active).Any();
+            else
+                return db.Clients.Where(x => x.Email.ToLower().Trim() == email.ToLower().Trim() && x.Active && x.id != id).Any();
         }
 
-        public static bool ExistsByPhone(string phone)
+        public static bool ExistsByPhone(string phone, int id = 0)
         {
             if (string.IsNullOrEmpty(phone.Trim()))
                 return false;
 
             var db = new RegistosRetroDB();
-            return db.Clients.Where(x => x.Phone.ToLower().Trim() == phone.ToLower().Trim() && x.Active).Any();
+            if (id <= 0)
+                return db.Clients.Where(x => x.Phone.ToLower().Trim() == phone.ToLower().Trim() && x.Active).Any();
+            else
+                return db.Clients.Where(x => x.Phone.ToLower().Trim() == phone.ToLower().Trim() && x.Active && x.id != id).Any();
         }
 
         public static void Delete(int id)
@@ -171,6 +190,20 @@ namespace Business
             var client = db.Clients.Where(x => x.id == id).Single();
             client.Active = false;
             db.SaveChanges();
+        }
+
+        public static decimal GetValueNotPaid(int id)
+        {
+            var db = new RegistosRetroDB();
+            decimal total = 0;
+            decimal paid = 0; 
+            if (db.InvoicesEntries.Where(x => x.Invoices.Client == id).Any())
+                total = db.InvoicesEntries.Where(x=> x.Invoices.Client == id && x.Invoices.Active).Select(x=> x.TotalAmount).Sum();
+            
+            if (db.InvoicePayments.Where(x => x.Invoices.Client == id).Any())
+                paid = db.InvoicePayments.Where(x => x.Invoices.Client == id && x.Invoices.Active).Select(x => x.Amount).Sum();
+            
+            return total - paid;
         }
     }
 }

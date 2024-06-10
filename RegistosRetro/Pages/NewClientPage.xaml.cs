@@ -30,12 +30,16 @@ namespace RegistosRetro.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Window parentWindow = Window.GetWindow(this);
+            MainWindow mainWindow = parentWindow as MainWindow;
             Frame frame = parentWindow.FindName("pageFrame") as Frame;
+
+            if (mainWindow != null)
+                mainWindow.SelectMenuButton("clients_btn");
             if (frame != null)
                 frame.NavigationUIVisibility = NavigationUIVisibility.Visible;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
             string name = inp_name.ucInput.Text.Trim();
             string address = inp_Address.ucInput.Text.Trim();
@@ -76,6 +80,15 @@ namespace RegistosRetro.Pages
 
             if (pageFrame != null)
                 pageFrame.Navigate(new ClientPage(client.id));
+        }
+
+        private void btn_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Window parentWindow = Window.GetWindow(this);
+            Frame pageFrame = parentWindow.FindName("pageFrame") as Frame;
+
+            if (pageFrame != null)
+                pageFrame.Navigate(new ClientsPage());
         }
 
     }

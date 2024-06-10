@@ -6,13 +6,15 @@
         xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
         Title="Registos Retro" Height="720" Width="1080" WindowStartupLocation="CenterScreen"
         TitleCharacterCasing="Normal" TitleBarHeight="25" ShowTitleBar="False"
-        ResizeMode="CanMinimize" WindowStyle="None"
+        WindowStyle="None"
         Icon="pack://application:,,,/Images/icon.png"
         ShowIconOnTitleBar="True"
-        AllowsTransparency="True" Background="Transparent"
+        AllowsTransparency="False" Background="Transparent"
         BorderThickness="0"
         Loaded="MetroWindow_Loaded"
         >
+
+    <!--ResizeMode="CanMinimize"-->
 
     <mah:MetroWindow.Resources>
         <Style TargetType="{x:Type mah:WindowButtonCommands}">
@@ -32,7 +34,8 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
             Background="#2F2F2F"
-            MouseDown="Border_MouseDown" >
+            MouseDown="Border_MouseDown"
+            MouseLeftButtonDown="Border_MouseLeftButtonDown">
 
             </Grid>
             <Grid Grid.Row="1" Grid.Column="0" Background="Transparent">
@@ -69,35 +72,35 @@
 
                         <Border Grid.Row="1" Background="#2F2F2F" CornerRadius="0 0 0 0">
                             <StackPanel>
-                                <Button Name="home_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                <!--<Button Name="home_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Icon:PackIconMaterial Kind="HomeVariant" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Geral" />
                                     </StackPanel>
-                                </Button>
+                                </Button>-->
 
-                                <Button Name="clients_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                <ToggleButton IsChecked="True" Name="clients_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Icon:PackIconMaterial Kind="AccountMultiple" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Clientes" />
                                     </StackPanel>
-                                </Button>
+                                </ToggleButton>
 
-                                <Button Name="services_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                <ToggleButton Name="services_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Icon:PackIconMaterial Kind="Cogs" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Serviços" />
                                     </StackPanel>
-                                </Button>
+                                </ToggleButton>
 
-                                <Button Name="invoices_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                <ToggleButton Name="invoices_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Icon:PackIconMaterial Kind="FileDocumentMultiple" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Folhas Obra" />
                                     </StackPanel>
-                                </Button>
+                                </ToggleButton>
 
-                                <Button Name="stock_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
+                                <!--<Button Name="stock_btn" Style="{StaticResource menuButton}" Click="SideBarButton_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Icon:PackIconMaterial Kind="Factory" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Stock" />
@@ -116,7 +119,7 @@
                                         <Icon:PackIconMaterial Kind="GasStation" Style="{StaticResource menuButtonIcon}" />
                                         <TextBlock Text="Combustível" />
                                     </StackPanel>
-                                </Button>
+                                </Button>-->
                             </StackPanel>
                         </Border>
 
