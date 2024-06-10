@@ -81,7 +81,7 @@ namespace RegistosRetro.Helpers
             }
         }
         public DateTime ServiceDate { get; set; }
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static List<TInvoiceEntry> InitializeList(List<Business.TInvoiceEntry> invoiceEntries)

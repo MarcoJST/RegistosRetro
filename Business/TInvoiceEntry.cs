@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 
 namespace Business
 {
@@ -60,7 +59,7 @@ namespace Business
         {
             var db = new RegistosRetroDB();
             var result = new List<TInvoiceEntry>();
-            var dbResult = db.InvoicesEntries.Where(x => x.Invoice== idInvoice).ToList();
+            var dbResult = db.InvoicesEntries.Where(x => x.Invoice == idInvoice).ToList();
 
             foreach (var item in dbResult)
                 result.Add(ConvertDatabaseObject(item));
@@ -79,7 +78,7 @@ namespace Business
             return result;
         }
 
-        public static TInvoiceEntry Add(int idInvoice, int idService, string description, string local, 
+        public static TInvoiceEntry Add(int idInvoice, int idService, string description, string local,
             decimal amount, decimal quantity, DateTime serviceDate)
         {
             var db = new RegistosRetroDB();
@@ -103,7 +102,7 @@ namespace Business
             decimal amount, decimal quantity, DateTime serviceDate)
         {
             var db = new RegistosRetroDB();
-            var dbResult = db.InvoicesEntries.Where(x=> x.id == id).Single();
+            var dbResult = db.InvoicesEntries.Where(x => x.id == id).Single();
             dbResult.Service = idService;
             dbResult.Description = string.IsNullOrEmpty(description) ? null : description;
             dbResult.Local = string.IsNullOrEmpty(local) ? null : local;

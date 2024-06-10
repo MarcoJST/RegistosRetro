@@ -3,11 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Business
 {
@@ -66,7 +61,7 @@ namespace Business
                     else
                     {
                         string searchLower = searchText.ToLower();
-                        query = query.Include(x=> x.Clients).Where(x => x.Clients.Name.ToLower().Contains(searchLower));
+                        query = query.Include(x => x.Clients).Where(x => x.Clients.Name.ToLower().Contains(searchLower));
                     }
                 }
 
@@ -108,14 +103,14 @@ namespace Business
             client.Active = false;
             db.SaveChanges();
         }
-    
+
         public static decimal GetPaidValue(int idInvoice)
         {
             var db = new RegistosRetroDB();
             if (!db.InvoicePayments.Where(x => x.Invoice == idInvoice).Any())
                 return 0.00m;
             else
-                return db.InvoicePayments.Where(x=> x.Invoice == idInvoice).Sum(x=> x.Amount);
+                return db.InvoicePayments.Where(x => x.Invoice == idInvoice).Sum(x => x.Amount);
         }
 
         public static decimal GetUnpaidValue(int idInvoice)
@@ -127,8 +122,8 @@ namespace Business
         public static TInvoice UpdateTotalAmount(int id)
         {
             var db = new RegistosRetroDB();
-            var invoice = db.Invoices.Where(x=> x.id == id).Single();
-            invoice.TotalAmount = db.InvoicesEntries.Where(x=> x.Invoice == id).Sum(x=> x.TotalAmount);
+            var invoice = db.Invoices.Where(x => x.id == id).Single();
+            invoice.TotalAmount = db.InvoicesEntries.Where(x => x.Invoice == id).Sum(x => x.TotalAmount);
             db.SaveChanges();
             return ConvertDatabaseObject(invoice);
         }

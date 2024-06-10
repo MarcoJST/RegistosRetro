@@ -2,11 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Business
 {
@@ -76,7 +71,7 @@ namespace Business
         public static TInvoicePayment Update(int id, decimal amount, string observations, DateTime paymentDate)
         {
             var db = new RegistosRetroDB();
-            var dbResult = db.InvoicePayments.Where(x=> x.id == id).Single();
+            var dbResult = db.InvoicePayments.Where(x => x.id == id).Single();
             dbResult.Observations = string.IsNullOrEmpty(observations) ? null : observations;
             dbResult.Amount = amount;
             dbResult.CreationDate = DateTime.Now;

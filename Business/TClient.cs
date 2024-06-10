@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Xml.Linq;
 
 namespace Business
 {
@@ -19,7 +17,8 @@ namespace Business
         public decimal NotPaid { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public TClient() { 
+        public TClient()
+        {
             id = -1;
             Name = "";
             Address = "";
@@ -41,16 +40,16 @@ namespace Business
             result.Phone = dbObject.Phone;
             result.Email = dbObject.Email;
             result.CreationDate = dbObject.CreationDate;
-            result.Invoiced = invoices.Sum(x=> x.TotalAmount);
-            result.Paid = invoices.Sum(x=> x.Paid);
-            result.NotPaid = invoices.Sum(x=> x.NotPaid);
+            result.Invoiced = invoices.Sum(x => x.TotalAmount);
+            result.Paid = invoices.Sum(x => x.Paid);
+            result.NotPaid = invoices.Sum(x => x.NotPaid);
             return result;
         }
 
         public static TClient Get(int id)
         {
             var db = new RegistosRetroDB();
-            var dbResult = db.Clients.Where(x=> x.id == id).Single();
+            var dbResult = db.Clients.Where(x => x.id == id).Single();
             return ConvertDatabaseObject(dbResult);
         }
 
@@ -196,13 +195,13 @@ namespace Business
         {
             var db = new RegistosRetroDB();
             decimal total = 0;
-            decimal paid = 0; 
+            decimal paid = 0;
             if (db.InvoicesEntries.Where(x => x.Invoices.Client == id).Any())
-                total = db.InvoicesEntries.Where(x=> x.Invoices.Client == id && x.Invoices.Active).Select(x=> x.TotalAmount).Sum();
-            
+                total = db.InvoicesEntries.Where(x => x.Invoices.Client == id && x.Invoices.Active).Select(x => x.TotalAmount).Sum();
+
             if (db.InvoicePayments.Where(x => x.Invoices.Client == id).Any())
                 paid = db.InvoicePayments.Where(x => x.Invoices.Client == id && x.Invoices.Active).Select(x => x.Amount).Sum();
-            
+
             return total - paid;
         }
     }

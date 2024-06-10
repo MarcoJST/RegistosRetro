@@ -136,7 +136,7 @@ namespace Business
         {
             if (!ExistsByReference(reference))
                 throw new Exception("Doesn't exist any service with the reference \"" + reference + "\"");
-            
+
             var db = new RegistosRetroDB();
             var dbResult = db.Services.Where(x => x.Reference.Trim().ToLower() == reference.Trim().ToLower() && x.Active).Single();
             return ConvertDatabaseObject(dbResult);

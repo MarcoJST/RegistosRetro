@@ -1,20 +1,13 @@
 ﻿using Business;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RegistosRetro.Pages
 {
@@ -113,7 +106,7 @@ namespace RegistosRetro.Pages
         }
         public decimal TotalNotPaidSum
         {
-            get { return TotalAmountSum-TotalPaidSum; }
+            get { return TotalAmountSum - TotalPaidSum; }
         }
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -184,7 +177,7 @@ namespace RegistosRetro.Pages
         {
             var newEntry = new Helpers.TInvoicePayment()
             {
-                id =0,
+                id = 0,
                 idInvoice = 0,
                 PaymentDate = DateTime.Now,
                 Observations = "-",
@@ -283,8 +276,8 @@ namespace RegistosRetro.Pages
             {
                 if (entry.id > 0)
                     Business.TInvoiceEntry.Update(entry.id, TService.GetByReference(entry.ServiceReference).id, entry.Description, entry.Local, entry.Amount, entry.Quantity, entry.ServiceDate);
-                else 
-                { 
+                else
+                {
                     entry.id = Business.TInvoiceEntry.Add(invoice.id, TService.GetByReference(entry.ServiceReference).id, entry.Description, entry.Local, entry.Amount, entry.Quantity, entry.ServiceDate).id;
                 }
             }

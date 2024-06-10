@@ -22,7 +22,7 @@ namespace RegistosRetro.Helpers
             get => _id;
             set
             {
-                _id= value;
+                _id = value;
                 OnPropertyChanged();
             }
         }
@@ -109,7 +109,7 @@ namespace RegistosRetro.Helpers
             result.Amount = bService.Amount;
             result.CreationDate = bService.CreationDate;
             result.InvoiceEntries = Helpers.TInvoiceEntry.InitializeList(Business.TInvoiceEntry.GetAllFromService(idService));
-            result.Invoiced = result.InvoiceEntries.Sum(x=> x.TotalAmount);
+            result.Invoiced = result.InvoiceEntries.Sum(x => x.TotalAmount);
             result.PageTitle = result.Reference + " - " + result.Service;
             return result;
         }
